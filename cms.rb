@@ -10,6 +10,21 @@ configure do
   set :sessions_secret, 'secret'
 end
 
+def render_markdown(text)
+  markdown =  Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+  markdown.render(text)
+end
+
+def load_file_content(path)
+  content = File.read(path)
+  if File.extname(path) == ".md"
+    render_markdown(content)
+  else
+    headers["Content-Type"] = "text/plain"
+    content
+  end
+end
+
 get '/' do
   @files = Dir.glob(root + '/data/*').map { |path| File.basename(path) }
 
@@ -21,14 +36,7 @@ end
 get '/:file_name' do
   file_path = root + '/data/' + params[:file_name]
   if File.exist? file_path
-    if file_path[-2..-1] == 'md'
-      markdown =  Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      file = File.read(file_path)
-      markdown.render(file)
-    else
-      headers["Content-Type"] = "text/plain"
-      File.readlines(file_path)
-    end
+    load_file_content(file_path)
   else
     session[:error] = "#{params[:file_name]} does not exist."
     redirect '/'
@@ -51,5 +59,5 @@ Notes:
 Todos:
 - [x] render markdowns as HTML using redcarpet
 - [x] add a test fot testing markdown
-
+- [ ] refactor code with helper methods
 =end
