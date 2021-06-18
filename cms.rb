@@ -44,20 +44,36 @@ get '/:file_name' do
 end
 
 =begin
-Problem:
-- [x] Render Markdown files as HTML files
-- [x]unlike the text files that we have?
+Problem: Editing Dcoument Content
+- Allow users to modify the content stored in the CMS
+
+Questions:
+- How does that impact testing if the content is changeable??
 
 Notes:
-- Use redcarpet to use markdown - it's a gem to render Markdown into HTML
-- How to test this?
-  - check for HTML tags? can use include to do this on a header or something
-- does that mean, I need to figure out if a file is a markdown,
-  - separately to txt files.
+- Create an edit link next to each document name on the index page
+  - When edit link is clicked, they are taken to a new edit page
+    - Implement a button or hyperlink to edit page?
+- When the user views the edit page, the content should appear with a text area
+  - Render the content in the edit box?
+     - What HTML do I need for editing? Is it a form? - POST - changes data
+     - pass the content to the edit page
+     - have a button to save the chnges - POST
+        - use the content
 
+Steps to implement:
+- Create an edit link next to each document - use a tags
+- Create a route that takes user to edit page
+  - Create a view template that shows the editing form
+  - Create a button to save changes
+- Render the content in the edit text box
+- Create a route that submits a post request with the edited content
+- Create a method to save the overwrite the file with the edited content
+  - What methods can I use here? Check ruby File documents.
 
-Todos:
-- [x] render markdowns as HTML using redcarpet
-- [x] add a test fot testing markdown
-- [ ] refactor code with helper methods
+- Create a test case for th editing page?
+  - How to test?
+  - Make two requests for before edit and after edit?
+  - Assert include should represent the before and after edit
+
 =end
