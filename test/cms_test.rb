@@ -29,4 +29,18 @@ class CmsTest < Minitest::Test
     assert_equal "text/plain", last_response["Content-Type"]
     assert_includes last_response.body, "Yukihiro Matsumoto dreams up Ruby."
   end
+
+  def test_file_does_not_exist
+    get '/unicorn.txt'
+
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "unicorn.txt does not exist"
+
+    get "/"
+    refute_includes last_response.body, "unicorn.txt does not exist"
+  end
 end
