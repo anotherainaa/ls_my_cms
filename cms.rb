@@ -43,6 +43,28 @@ get '/:file_name' do
   end
 end
 
+# Edit an existing document
+
+get '/:file_name/edit' do
+  file_path = root + '/data/' + params[:file_name]
+
+  if File.exist? file_path
+    @content = File.read(file_path)
+    erb :edit
+  else
+    session[:error] = "#{params[:file_name]} does not exist."
+    redirect '/'
+  end
+end
+
+# Updates an existing document
+
+post '/:file_name/edit' do
+  file_path = root + '/data/' + params[:file_name]
+  File.open(file_path, "w") { |f| f.write(params[:file_content]) }
+  redirect "/#{params[:file_name]}"
+end
+
 =begin
 Problem: Editing Dcoument Content
 - Allow users to modify the content stored in the CMS
@@ -62,18 +84,20 @@ Notes:
         - use the content
 
 Steps to implement:
-- Create an edit link next to each document - use a tags
-- Create a route that takes user to edit page
-  - Create a view template that shows the editing form
-  - Create a button to save changes
-- Render the content in the edit text box
-- Create a route that submits a post request with the edited content
-- Create a method to save the overwrite the file with the edited content
+- [x] Create an edit link next to each document - use a tags
+- [x] Create a route that takes user to edit page
+- [x] Create a view template that shows the editing form
+  - [x] Create a button to save changes
+- [x] Render the content in the edit text box
+- [x] Create a route that submits a post request with the edited content
+- [x] Create a method to save the overwrite the file with the edited content
   - What methods can I use here? Check ruby File documents.
 
 - Create a test case for th editing page?
   - How to test?
   - Make two requests for before edit and after edit?
   - Assert include should represent the before and after edit
+
+- Refactor the code to use helper methods?
 
 =end
