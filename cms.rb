@@ -25,7 +25,7 @@ def load_file_content(path)
   content = File.read(path)
   case File.extname(path)
   when ".md"
-    render_markdown(content)
+    erb render_markdown(content)
   when ".txt"
     headers["Content-Type"] = "text/plain"
     content
@@ -80,13 +80,6 @@ post '/:filename' do
 end
 
 =begin
-How to test in isolation
-- Currently, overwriting the files and test would file
-To solve this, we can:
-- using two different directories, one for testing and the other for prod
-- if database, use two different database
-- we can use two different directories
 
-- Don't forget the SEAT approcach
 
 =end

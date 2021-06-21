@@ -3,15 +3,17 @@
   <head>
     <title>CMS App</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Sans">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="/stylesheets/application.css">
   </head>
   <body>
     <header>
+      <% if session[:message] %>
+        <div class="message">
+          <p><%= session.delete(:message) %></p>
+        <div>
+      <% end %>
     </header>
-
-    <% if session[:message] %>
-      <p><%= session.delete(:message) %></p>
-    <% end %>
 
     <main>
       <%= yield %>
