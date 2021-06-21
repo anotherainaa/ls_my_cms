@@ -114,9 +114,43 @@ post '/:filename/destroy' do
   redirect "/"
 end
 
+get '/users/signin' do
+  erb :signin, layout: :layout
+end
+
+post '/users/signin' do
+  username = params[:username]
+  password = params[:password]
+
+  if username == 'admin' && password == 'secret'
+    session[:username] = username
+    session[:message] = "Welcome!"
+    redirect "/"
+  else
+    session[:message] = "Invalid credentials."
+    status 422
+    erb :signin
+  end
+end
+
+post "/users/signout" do
+  session.delete(:username)
+  session[:message] = "You have been signed out"
+  redirect "/"
+end
+
 =begin
 
-Delete a document
+- [x] create a signin page url: '/users/signin'
+  - [x] render a sign in page with text box to fill in username and password
+  - [x] create a button to sign in and send those login details
+- where do we check for username and password?
+  - create a post route
+  - if matches admin and secrete password
+    - set session message as welcome
+    - redirect to index
+  else
+    - go back to sign in page
 
 
 =end

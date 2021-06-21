@@ -30,6 +30,10 @@ class CmsTest < Minitest::Test
     end
   end
 
+  def session
+    last_request.env["rack.session"]
+  end
+
   def test_index
     create_document "about.md"
     create_document "changes.txt"
@@ -147,5 +151,40 @@ class CmsTest < Minitest::Test
 
     get '/'
     refute_includes last_response.body, "test.txt"
+  end
+
+  def test_signin_form
+    get '/users/signin'
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "<input"
+    assert_includes last_response.body, %q(<button type="submit")
+  end
+
+  def test_signin
+    post 'users/signin', username: 'admin', password: 'secret'
+
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+    assert_includes last_response.body, "Welcome!"
+    refute_includes last_response.body, "Signed in as admin."
+  end
+
+  def test_signin_with_invalid_credentials
+    post 'users/signin', username: 'admin', password: 'wrong'
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "Invalid credentials."
+  end
+
+  def test_signout
+    post 'users/signin', username: 'admin', password: 'secret'
+    get last_response["Location"]
+    assert_includes last_response.body, "Welcome!"
+
+    post 'users/signout'
+    assert_equal 302, last_response.status
+    get last_response["Location"]
+    assert_includes last_response.body, "You have been signed out"
   end
 end
