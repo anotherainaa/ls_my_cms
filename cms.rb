@@ -37,7 +37,30 @@ get '/' do
   @files = Dir.glob(pattern).map do|path|
     File.basename(path)
   end
-  erb :index
+  erb :index, layout: :layout
+end
+
+get '/new' do
+  erb :new, layout: :layout
+end
+
+post '/create' do
+  filename = params[:filename]
+
+  if filename.empty?
+    session[:message]= "A name is required."
+    status 422
+    erb :new
+  elsif ![".txt", ".md"].include? File.extname(filename)
+    session[:message]= ".txt or .md file extension is required."
+    status 422
+    erb :new
+  else
+    file_path = File.join(data_path, filename)
+    File.write(file_path, "")
+    session[:message] = "#{filename} has been created."
+    redirect "/"
+  end
 end
 
 # Open a document as text file
@@ -61,7 +84,7 @@ get '/:filename/edit' do
 
   if File.exist? file_path
     @content = File.read(file_path)
-    erb :edit
+    erb :edit, layout: :layout
   else
     session[:message] = "#{@filename} does not exist."
     redirect '/'
@@ -79,7 +102,17 @@ post '/:filename' do
   redirect "/"
 end
 
+# Creata e new document
+
+
 =begin
 
+Add a link to for users to create new documents
+- [x] create a link using a tag on the index page that says new document
+- [x] create a route to create a new document - template new
+- [x] in the erb, create a form to submit the name of the new document
+- [x] in the routes, create this new document. How to create a new document?
+- [x] add a validation for the form to say a name is required
+-  add test for this
 
 =end
