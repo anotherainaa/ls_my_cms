@@ -33,20 +33,20 @@ end
 
 # Open a document as text file
 
-get '/:file_name' do
-  file_path = root + '/data/' + params[:file_name]
+get '/:filename' do
+  file_path = root + '/data/' + params[:filename]
   if File.exist? file_path
     load_file_content(file_path)
   else
-    session[:error] = "#{params[:file_name]} does not exist."
+    session[:error] = "#{params[:filename]} does not exist."
     redirect '/'
   end
 end
 
 # Edit an existing document
 
-get '/:file_name/edit' do
-  file_path = root + '/data/' + params[:file_name]
+get '/:filename/edit' do
+  file_path = root + '/data/' + params[:filename]
 
   if File.exist? file_path
     @content = File.read(file_path)
@@ -59,10 +59,12 @@ end
 
 # Updates an existing document
 
-post '/:file_name/edit' do
-  file_path = root + '/data/' + params[:file_name]
+post '/:filename' do
+  file_path = root + '/data/' + params[:filename]
   File.open(file_path, "w") { |f| f.write(params[:file_content]) }
-  redirect "/#{params[:file_name]}"
+
+  session[:message] = "#{params[:filename]} has been updated."
+  redirect "/"
 end
 
 =begin

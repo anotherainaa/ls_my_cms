@@ -15,6 +15,12 @@
       </div>
     <% end %>
 
+    <% if session[:message] %>
+      <div class="flash error">
+        <p><%= session.delete(:message) %></p>
+      </div>
+    <% end %>
+
     <main>
       <%= yield %>
     </main>

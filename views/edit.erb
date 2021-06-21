@@ -4,7 +4,7 @@
 <textarea rows="20" cols="100" name="file_content" form="edit_form">
 <%= @content %></textarea>
 
-<form action="/<%= params[:file_name] %>/edit" method="post" id="edit_form">
+<form action="/<%= params[:filename] %>" method="post" id="edit_form">
   <button type="submit">Save changes</button>
 </form>
 
