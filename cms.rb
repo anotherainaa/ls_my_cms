@@ -40,9 +40,13 @@ get '/' do
   erb :index, layout: :layout
 end
 
+# Add a new document
+
 get '/new' do
   erb :new, layout: :layout
 end
+
+# Save the new document
 
 post '/create' do
   filename = params[:filename]
@@ -102,17 +106,17 @@ post '/:filename' do
   redirect "/"
 end
 
-# Creata e new document
+post '/:filename/destroy' do
+  file_path = File.join(data_path, params[:filename])
 
+  File.delete(file_path)
+  session[:message] = "#{params[:filename]} has been deleted."
+  redirect "/"
+end
 
 =begin
 
-Add a link to for users to create new documents
-- [x] create a link using a tag on the index page that says new document
-- [x] create a route to create a new document - template new
-- [x] in the erb, create a form to submit the name of the new document
-- [x] in the routes, create this new document. How to create a new document?
-- [x] add a validation for the form to say a name is required
--  add test for this
+Delete a document
+
 
 =end

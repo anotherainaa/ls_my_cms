@@ -4,6 +4,10 @@ body {
 }
 
 .message {
-  padding: 10px;
+  padding: 10px#
   background: #FFFF99;
+}
+
+form.inline {
+  display: inline;
 }
