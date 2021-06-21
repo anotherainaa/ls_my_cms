@@ -2,10 +2,25 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   enable :sessions
   set :sessions_secret, 'secret'
+end
+
+def user_signed_in?
+  session.key?(:username)
+end
+
+def require_signed_in_user
+  unless user_signed_in?
+    session[:message] = "You must be signed in to do that."
+    redirect '/'
+  end
+end
+
+def load_user_credentials
 end
 
 def data_path
@@ -43,12 +58,16 @@ end
 # Add a new document
 
 get '/new' do
+  require_signed_in_user
+
   erb :new, layout: :layout
 end
 
 # Save the new document
 
 post '/create' do
+  require_signed_in_user
+
   filename = params[:filename]
 
   if filename.empty?
@@ -83,6 +102,8 @@ end
 # Edit an existing document
 
 get '/:filename/edit' do
+  require_signed_in_user
+
   file_path = File.join(data_path, params[:filename])
   @filename = params[:filename]
 
@@ -98,6 +119,8 @@ end
 # Updates an existing document
 
 post '/:filename' do
+  require_signed_in_user
+
   file_path = File.join(data_path, params[:filename])
 
   File.open(file_path, "w") { |file| file.write(params[:file_content]) }
@@ -107,6 +130,8 @@ post '/:filename' do
 end
 
 post '/:filename/destroy' do
+  require_signed_in_user
+
   file_path = File.join(data_path, params[:filename])
 
   File.delete(file_path)
@@ -138,19 +163,3 @@ post "/users/signout" do
   session[:message] = "You have been signed out"
   redirect "/"
 end
-
-=begin
-
-- [x] create a signin page url: '/users/signin'
-  - [x] render a sign in page with text box to fill in username and password
-  - [x] create a button to sign in and send those login details
-- where do we check for username and password?
-  - create a post route
-  - if matches admin and secrete password
-    - set session message as welcome
-    - redirect to index
-  else
-    - go back to sign in page
-
-
-=end
