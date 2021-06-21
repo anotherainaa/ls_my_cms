@@ -1,10 +1,8 @@
-<h2>Editing content of <%= params[:file_name] %></h2>
-
-
-<textarea rows="20" cols="100" name="file_content" form="edit_form">
-<%= @content %></textarea>
-
-<form action="/<%= params[:filename] %>" method="post" id="edit_form">
+<form action="/<%= @filename %>" method="post" id="edit_form">
+  <label for="file_content">Edit content of <%= @filename %></label>
+  <div>
+    <textarea name="file_content" id="content" rows="20" cols="100"><%= @content %></textarea>
+  </div>
   <button type="submit">Save changes</button>
 </form>
 
