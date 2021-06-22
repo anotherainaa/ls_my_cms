@@ -6,6 +6,8 @@ gem "sinatra"
 gem "sinatra-contrib"
 gem "erubis"
 gem "redcarpet"
+gem "bcrypt"
+gem "yaml"
 
 gem "minitest"
 gem "rack-test"

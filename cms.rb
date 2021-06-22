@@ -3,6 +3,7 @@ require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
 
 configure do
   enable :sessions
@@ -11,7 +12,7 @@ end
 
 def data_path
   if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/data/, __FILE__")
+    File.expand_path("../test/data/", __FILE__)
   else
     File.expand_path("../data", __FILE__)
   end
@@ -19,7 +20,7 @@ end
 
 def load_user_credentials
   credentials_path = if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/users.yml, __FILE__")
+    File.expand_path("../test/users.yml", __FILE__)
   else
     File.expand_path("../users.yml", __FILE__)
   end
@@ -149,11 +150,22 @@ get '/users/signin' do
   erb :signin, layout: :layout
 end
 
+def valid_credentials?(username, password)
+  credentials = load_user_credentials
+
+  if credentials.key?(username)
+    bcrypt_password = BCrypt::Password.new(credentials[username])
+    bcrypt_password == password
+  else
+    false
+  end
+end
+
 post '/users/signin' do
   credentials = load_user_credentials
   username = params[:username]
 
-  if credentials.key?(username) && credentials[username] == params[:password]
+  if valid_credentials?(username, params[:password])
     session[:username] = username
     session[:message] = "Welcome!"
     redirect "/"

@@ -192,7 +192,7 @@ class CmsTest < Minitest::Test
   end
 
   def test_signin
-    post 'users/signin', username: 'admin', password: 'secret'
+    post 'users/signin', username: 'admin', password: '123456'
 
     assert_equal 302, last_response.status
     assert_equal "Welcome!", session[:message]
