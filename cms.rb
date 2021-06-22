@@ -9,6 +9,23 @@ configure do
   set :sessions_secret, 'secret'
 end
 
+def data_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/data/, __FILE__")
+  else
+    File.expand_path("../data", __FILE__)
+  end
+end
+
+def load_user_credentials
+  credentials_path = if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/users.yml, __FILE__")
+  else
+    File.expand_path("../users.yml", __FILE__)
+  end
+  YAML.load_file(credentials_path)
+end
+
 def user_signed_in?
   session.key?(:username)
 end
@@ -17,17 +34,6 @@ def require_signed_in_user
   unless user_signed_in?
     session[:message] = "You must be signed in to do that."
     redirect '/'
-  end
-end
-
-def load_user_credentials
-end
-
-def data_path
-  if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/data/, __FILE__")
-  else
-    File.expand_path("../data", __FILE__)
   end
 end
 
@@ -144,10 +150,10 @@ get '/users/signin' do
 end
 
 post '/users/signin' do
+  credentials = load_user_credentials
   username = params[:username]
-  password = params[:password]
 
-  if username == 'admin' && password == 'secret'
+  if credentials.key?(username) && credentials[username] == params[:password]
     session[:username] = username
     session[:message] = "Welcome!"
     redirect "/"
